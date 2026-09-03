@@ -1793,7 +1793,31 @@ TEST(FixedString, Substring)
     static_assert(VAL1.substr(1, 2) == "12");
     static_assert(VAL1.substr(2, 2) == "23");
 
+    // substr(pos) is valid for pos == size() and yields an empty string, matching
+    // std::string/std::string_view. Only pos > size() is out of range.
+    static_assert(VAL1.substr(VAL1.length()).empty());
+    static_assert(VAL1.substr(4, 2).empty());
+    static_assert(FixedString<7>{}.substr(0).empty());
+
     EXPECT_DEATH((void)VAL1.substr(5, 1), "");
+}
+
+TEST(FixedString, Compare)
+{
+    constexpr FixedString<8> VAL1{"abc"};
+    constexpr FixedString<8> VAL2{"abd"};
+    constexpr FixedString<8> VAL3{"ab"};
+    constexpr FixedString<8> VAL4{"abc"};
+
+    static_assert(VAL1.compare("abc") == 0);
+    static_assert(VAL1.compare(std::string_view{"abc"}) == 0);
+    static_assert(VAL1.compare(VAL4) == 0);
+    static_assert(VAL1.compare(VAL2) < 0);
+    static_assert(VAL2.compare(VAL1) > 0);
+    static_assert(VAL3.compare(VAL1) < 0);
+    static_assert(VAL1.compare(VAL3) > 0);
+    static_assert(VAL1.compare("") > 0);
+    static_assert(FixedString<8>{}.compare("") == 0);
 }
 
 TEST(FixedString, Resize)

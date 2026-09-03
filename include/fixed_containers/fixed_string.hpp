@@ -603,7 +603,9 @@ public:
         const std_transition::source_location& loc =
             std_transition::source_location::current()) const
     {
-        if (preconditions::test(pos < length()))
+        // Match std::string / std::string_view: only pos > size() is out of range.
+        // substr(size()) is well-defined and yields an empty view.
+        if (preconditions::test(pos <= length()))
         {
             Checking::out_of_range(pos, length(), loc);
         }

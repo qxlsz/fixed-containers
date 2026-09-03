@@ -116,6 +116,15 @@ TEST(FixedSet, ContainsTransparentComparator)
     static_assert(VAL.contains(KEY_B));
 }
 
+TEST(FixedSet, Count)
+{
+    constexpr FixedSet<int, 10> VAL1{2, 4};
+    static_assert(VAL1.count(1) == 0);
+    static_assert(VAL1.count(2) == 1);
+    static_assert(VAL1.count(3) == 0);
+    static_assert(VAL1.count(4) == 1);
+}
+
 TEST(FixedSet, CountTransparentComparator)
 {
     constexpr FixedSet<MockAComparableToB, 5, std::less<>> VAL{

@@ -291,4 +291,13 @@ TEST(RecursiveReflection, AllPrivateCustom)
     static_assert(PATHS.contains(path_from_string("private_class.a_")));
 }
 
+#else
+
+#include <gtest/gtest.h>
+
+TEST(RecursiveReflection, RequiresClang15OrNewer)
+{
+    GTEST_SKIP() << "recursive_reflection tests require clang 15+";
+}
+
 #endif

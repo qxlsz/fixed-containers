@@ -201,6 +201,36 @@ TEST(FixedCircularQueue, Pop)
     static_assert(VAL1.size() == 1);
 }
 
+TEST(FixedCircularQueue, PopEmpty)
+{
+    FixedCircularQueue<int, 5> var1{};
+    EXPECT_DEATH(var1.pop(), "");
+}
+
+TEST(FixedCircularQueue, FrontEmptyContainer)
+{
+    {
+        const FixedCircularQueue<int, 3> var{};
+        EXPECT_DEATH((void)var.front(), "");
+    }
+    {
+        FixedCircularQueue<int, 3> var{};
+        EXPECT_DEATH(var.front(), "");
+    }
+}
+
+TEST(FixedCircularQueue, BackEmptyContainer)
+{
+    {
+        const FixedCircularQueue<int, 3> var{};
+        EXPECT_DEATH((void)var.back(), "");
+    }
+    {
+        FixedCircularQueue<int, 3> var{};
+        EXPECT_DEATH(var.back(), "");
+    }
+}
+
 TEST(FixedCircularQueue, Equality)
 {
     static constexpr std::array<int, 2> ENTRY_A1{1, 2};

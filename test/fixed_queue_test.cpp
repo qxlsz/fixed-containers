@@ -113,6 +113,22 @@ TEST(FixedQueue, Back)
     }
 }
 
+TEST(FixedQueue, Size)
+{
+    constexpr FixedQueue<int, 3> VAL1 = []()
+    {
+        FixedQueue<int, 3> var1{};
+        var1.push(1);
+        var1.push(2);
+        var1.pop();
+        return var1;
+    }();
+
+    static_assert(VAL1.size() == 1);
+    static_assert(VAL1.front() == 2);
+    static_assert(!VAL1.empty());
+}
+
 TEST(FixedQueue, Push)
 {
     constexpr FixedQueue<int, 3> VAL1 = []()
@@ -126,6 +142,15 @@ TEST(FixedQueue, Push)
 
     static_assert(VAL1.front() == 77);
     static_assert(VAL1.size() == 2);
+}
+
+TEST(FixedQueue, PushExceedsCapacity)
+{
+    FixedQueue<int, 2> var{};
+    var.push(0);
+    const int value = 1;
+    var.push(value);
+    EXPECT_DEATH(var.push(2), "");
 }
 
 TEST(FixedQueue, Emplace)
@@ -143,6 +168,14 @@ TEST(FixedQueue, Emplace)
     static_assert(VAL1.size() == 2);
 }
 
+TEST(FixedQueue, EmplaceExceedsCapacity)
+{
+    FixedQueue<int, 2> var{};
+    var.emplace(0);
+    var.emplace(1);
+    EXPECT_DEATH(var.emplace(2), "");
+}
+
 TEST(FixedQueue, Pop)
 {
     constexpr FixedQueue<int, 3> VAL1 = []()
@@ -155,6 +188,36 @@ TEST(FixedQueue, Pop)
 
     static_assert(VAL1.front() == 99);
     static_assert(VAL1.size() == 1);
+}
+
+TEST(FixedQueue, PopEmpty)
+{
+    FixedQueue<int, 5> var1{};
+    EXPECT_DEATH(var1.pop(), "");
+}
+
+TEST(FixedQueue, FrontEmptyContainer)
+{
+    {
+        const FixedQueue<int, 3> var{};
+        EXPECT_DEATH((void)var.front(), "");
+    }
+    {
+        FixedQueue<int, 3> var{};
+        EXPECT_DEATH(var.front(), "");
+    }
+}
+
+TEST(FixedQueue, BackEmptyContainer)
+{
+    {
+        const FixedQueue<int, 3> var{};
+        EXPECT_DEATH((void)var.back(), "");
+    }
+    {
+        FixedQueue<int, 3> var{};
+        EXPECT_DEATH(var.back(), "");
+    }
 }
 
 TEST(FixedQueue, Equality)

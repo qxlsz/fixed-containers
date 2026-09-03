@@ -88,6 +88,22 @@ TEST(FixedStack, Top)
     }
 }
 
+TEST(FixedStack, Size)
+{
+    constexpr FixedStack<int, 3> VAL1 = []()
+    {
+        FixedStack<int, 3> var1{};
+        var1.push(1);
+        var1.push(2);
+        var1.pop();
+        return var1;
+    }();
+
+    static_assert(VAL1.size() == 1);
+    static_assert(VAL1.top() == 1);
+    static_assert(!VAL1.empty());
+}
+
 TEST(FixedStack, Push)
 {
     constexpr FixedStack<int, 3> VAL1 = []()
@@ -101,6 +117,15 @@ TEST(FixedStack, Push)
 
     static_assert(VAL1.top() == 99);
     static_assert(VAL1.size() == 2);
+}
+
+TEST(FixedStack, PushExceedsCapacity)
+{
+    FixedStack<int, 2> var{};
+    var.push(0);
+    const int value = 1;
+    var.push(value);
+    EXPECT_DEATH(var.push(2), "");
 }
 
 TEST(FixedStack, Emplace)
@@ -118,6 +143,14 @@ TEST(FixedStack, Emplace)
     static_assert(VAL1.size() == 2);
 }
 
+TEST(FixedStack, EmplaceExceedsCapacity)
+{
+    FixedStack<int, 2> var{};
+    var.emplace(0);
+    var.emplace(1);
+    EXPECT_DEATH(var.emplace(2), "");
+}
+
 TEST(FixedStack, Pop)
 {
     constexpr FixedStack<int, 3> VAL1 = []()
@@ -130,6 +163,24 @@ TEST(FixedStack, Pop)
 
     static_assert(VAL1.top() == 77);
     static_assert(VAL1.size() == 1);
+}
+
+TEST(FixedStack, PopEmpty)
+{
+    FixedStack<int, 5> var1{};
+    EXPECT_DEATH(var1.pop(), "");
+}
+
+TEST(FixedStack, TopEmptyContainer)
+{
+    {
+        const FixedStack<int, 3> var{};
+        EXPECT_DEATH((void)var.top(), "");
+    }
+    {
+        FixedStack<int, 3> var{};
+        EXPECT_DEATH(var.top(), "");
+    }
 }
 
 TEST(FixedStack, Equality)
